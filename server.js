@@ -4,7 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 const connectDB = require('./config/db');
 const contactRoutes = require('./routes/contact');
-const coursesRoutes = require('./routes/courses');
+// const coursesRoutes = require('./routes/courses');
 
 
 const app = express();
@@ -17,7 +17,7 @@ app.use(express.static('public'));
 
 
 app.use('/api', contactRoutes);
-app.use('/api', coursesRoutes);
+// app.use('/api', coursesRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
