@@ -19,8 +19,13 @@ app.use(express.static('public'));
 app.use('/api', contactRoutes);
 app.use('/api', coursesRoutes);
 
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+}).on('error', (err) => {
+    console.error('Server startup error:', err);
+    process.exit(1);
+});
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', message: 'Server is running' });
 });
