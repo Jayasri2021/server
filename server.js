@@ -1,31 +1,34 @@
-// server.js
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const connectDB = require('./config/db');
+const { connectDB, pool } = require('./config/db');
 const contactRoutes = require('./routes/contact');
-const coursesRoutes = require('./routes/courses');
-
+const authRoutes = require('./routes/auth');
+const { verifyToken } = require('./middleware/auth'); 
 
 const app = express();
-
 connectDB();
 
-app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
 
+app.use(cors({
+    origin: ['http://localhost:3000', 'https://server-8few.onrender.com'],
+    credentials: true
+}));
 
-app.use('/api', contactRoutes);
-app.use('/api', coursesRoutes);
+app.use('/api/contact', verifyToken, contactRoutes);
+app.use('/api/auth', authRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-}).on('error', (err) => {
-    console.error('Server startup error:', err);
-    process.exit(1);
 });
-app.get('/health', (req, res) => {
-    res.json({ status: 'ok', message: 'Server is running' });
+
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+        console.error('Database connection error:', err);
+    } else {
+        console.log('Database connected successfully');
+    }
 });

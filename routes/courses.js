@@ -3,10 +3,10 @@ const router = express.Router();
 const Pool = require('pg-pool');
 
 const coursePool = new Pool({
-    connectionString: process.env.COURSES_DATABASE_URL
+    connectionString: process.env.DATABASE_URL
 });
 
-router.post('/courses', async (req, res) => {
+router.post('/coursespost', async (req, res) => {
     try {
         const { name, course, email } = req.body;
         
