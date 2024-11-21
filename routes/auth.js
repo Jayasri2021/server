@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { pool } = require('../config/db');
 
+const secret = process.env.JWT_SECRET || 'Password321';
 // Sign up
 router.post('/signup', async (req, res) => {
     try {
@@ -76,8 +78,11 @@ console.debug(email,password,course)
             'INSERT INTO courses (course_name, user_id) VALUES ($1, $2)',
             [course, user.user_id]
         );
-        
-        res.json({ message: 'Login successful and course enrolled',user });
+
+        // generate JWT
+        const token = jwt.sign({ userId: user.user_id, course: user.course }, secret, { expiresIn: '1h' });
+        res.json({ message: 'Login successful', token });
+    
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

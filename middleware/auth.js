@@ -1,21 +1,20 @@
-// const jwt = require('jsonwebtoken');
-// const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 
-// const auth = async (req, res, next) => {
-//     try {
-//         const token = req.header('Authorization').replace('Bearer ', '');
-//         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//         const user = await User.findById(decoded._id);
-        
-//         if (!user) {
-//             throw new Error();
-//         }
+const secret = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
-//         req.user = user;
-//         next();
-//     } catch (error) {
-//         res.status(401).send({ error: 'Please authenticate.' });
-//     }
-// };
+// Middleware to verify JWT tokens
+const verifyToken = (req, res, next) => {
+    const token = req.headers['authorization'];
+    if (!token) {
+        return res.status(403).json({ message: 'Token required' });
+    }
+    try {
+        const decoded = jwt.verify(token, secret);
+        req.user = decoded; // Attach the decoded payload to the request
+        next();
+    } catch (err) {
+        res.status(401).json({ message: 'Invalid token' });
+    }
+};
 
-// module.exports = auth;
+module.exports = { verifyToken };

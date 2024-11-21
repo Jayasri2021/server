@@ -1,4 +1,3 @@
-// routes/contact.js
 const express = require('express');
 const router = express.Router();
 const Pool = require('pg-pool');
@@ -7,12 +6,11 @@ const contactPool = new Pool({
     connectionString: process.env.DATABASE_URL
 });
 
-
 router.post('/contact', async (req, res) => {
     try {
 
         const { name, phone, email, message } = req.body;
-        if(!name||!email||!phone||!message){res.status(201).json({message:"Mandatory fields are name,email,phone,message"});return}
+        if(!name||!phone || !email||!message){res.status(201).json({message:"Mandatory fields are name,email,phone,message"});return}
 
         const result = await contactPool.query(`
             INSERT INTO contact (name, phone, email, message)
@@ -36,9 +34,5 @@ router.get('/contact/get', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
-
-// router.get('/test', async (req, res) => {
-//     res.json({ message: "Contact API is working" });
-// });
 
 module.exports = router;
